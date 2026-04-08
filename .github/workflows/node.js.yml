@@ -1,25 +1,18 @@
-<<<<<<< HEAD
+
 ﻿# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-=======
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
->>>>>>> 308213647ce29ec4b3de42b6ec6b51011c0b0097
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
 
 on:
-<<<<<<< HEAD
+
   workflow_dispatch:
   push:
     branches: [ "master", "main" ]
   pull_request:
     branches: [ "master", "main" ]
-=======
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
->>>>>>> 308213647ce29ec4b3de42b6ec6b51011c0b0097
+
+
 
 jobs:
   build:
@@ -28,27 +21,23 @@ jobs:
 
     strategy:
       matrix:
-<<<<<<< HEAD
+
         node-version: [24.x]
-=======
-        node-version: [18.x, 20.x, 22.x]
->>>>>>> 308213647ce29ec4b3de42b6ec6b51011c0b0097
+
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
-<<<<<<< HEAD
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '24.x'
-=======
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
->>>>>>> 308213647ce29ec4b3de42b6ec6b51011c0b0097
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
