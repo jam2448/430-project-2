@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 
 const setName = (name) => _.escape(name).trim();
+const setDiet = (diet) => _.escape(diet).trim();
 
 
 const DomoSchema = new mongoose.Schema({
@@ -17,6 +18,13 @@ const DomoSchema = new mongoose.Schema({
         type: Number, 
         min: 0,
         required: true,
+    },
+
+    diet: {
+        type: String,
+        trim: true,
+        required: true,
+        set: setDiet,
     },
 
     owner: {
@@ -34,6 +42,7 @@ const DomoSchema = new mongoose.Schema({
 DomoSchema.statics.toAPI = (doc) => ({
     name: doc.name,
     age: doc.age,
+    diet: doc.diet,
 });
 
 const DomoModel = mongoose.model('Domo', DomoSchema);
