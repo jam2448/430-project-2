@@ -79,7 +79,7 @@ const UpdateForm = (props) => {
             <label htmlFor="name"> Name: </label>
             <input id='name' type="text" name='name' placeholder='Domo Update Name' />
 
-            <label htmlFor="age">Age To Update: </label>
+            <label htmlFor="age">Updated Age: </label>
             <input id="age" type="number" name="age" min="0" />
 
             <input type="submit" className='makeDomoSubmit' value="Update Domo" />
