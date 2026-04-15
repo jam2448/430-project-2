@@ -1,3 +1,5 @@
+import Popup from 'reactjs-popup';
+
 const helper = require('./helper.js');
 const React = require('react');
 const { useState, useEffect } = React;
@@ -41,28 +43,45 @@ const handleUpdate = (e, onDomoUpdated) => {
 
 
 
-const DomoForm = (props) => {
+const RecipeForm = (props) => {
     return (
-        <form id='domoForm'
-            onSubmit={(e) => handleDomo(e, props.triggerReload)}
-            name='domoForm'
-            action='/maker'
-            method='POST'
-            className='domoForm'
-        >
 
-            <label htmlFor="name"> Name: </label>
-            <input id='name' type="text" name='name' placeholder='Domo Name' />
+        <div>
 
-            <label htmlFor="diet">Diet: </label>
-            <input id="diet" type="text" name="diet" placeholder='domo diet' />
+            <Popup trigger={<button> Create Recipe </button>}
+                modal nested>
+                {
+                    close => (
+                        <form id='domoForm'
+                            onSubmit={(e) => handleDomo(e, props.triggerReload)}
+                            name='domoForm'
+                            action='/maker'
+                            method='POST'
+                            className='domoForm'
+                        >
+                            <label htmlFor="title"> Recipe Name: </label>
+                            <input id='title' type="text" name='title' placeholder='Enter Recipe Name...' />
 
-            <label htmlFor="age">Age: </label>
-            <input id="age" type="number" name="age" min="0" />
+                            <label htmlFor="time">Total Cook Time: </label>
+                            <input id="time" type="text" name="time" placeholder='Enter Cook Time...' />
+
+                            <label htmlFor="rating">Rating: </label>
+                            <input id="rating" type="number" name="age" min="0" max="10" />
+
+                            <label htmlFor="ingredients">Ingredients: </label>
 
 
-            <input type="submit" className='makeDomoSubmit' value="Make Domo" />
-        </form>
+                            <input type="submit" className='makeDomoSubmit' value="Add Recipe" />
+                        </form>
+                    )
+                }
+
+            </Popup>
+
+        </div>
+
+
+
     );
 };
 
@@ -145,7 +164,7 @@ const App = () => {
             </div>
             <div id='updateDomo'>
 
-                <UpdateForm triggerReload={() => setReloadDomos(!reloadDomos)}/>
+                <UpdateForm triggerReload={() => setReloadDomos(!reloadDomos)} />
 
             </div>
 

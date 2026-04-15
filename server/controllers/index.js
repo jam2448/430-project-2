@@ -1,3 +1,3 @@
-module.exports.Domo = require('./Domo.js');
+module.exports.Recipe = require('./recipe.js');
 module.exports.Account = require('./Account.js');
 
