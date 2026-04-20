@@ -11,10 +11,15 @@ const handleError = (message) => {
    entries in the response JSON object, and will handle them appropriately.
 */
 const sendPost = async (url, data, handler) => {
+
+  //see if the incoming data is a formdata or not
+  const isFormData = data instanceof FormData;
+
   const response = await fetch(url, {
     method: 'POST',
-    headers: {},
-    body: data,
+    //if the data is formdata, then donr't set the header. otherwise set it to json and stringify it
+    headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+    body: isFormData ? data : JSON.stringify(data),
   });
 
   const result = await response.json();
