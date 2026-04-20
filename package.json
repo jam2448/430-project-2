@@ -26,6 +26,7 @@
     "connect-redis": "^9.0.0",
     "dotenv": "^17.4.0",
     "express": "^5.1.0",
+    "express-fileupload": "^1.5.2",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.18.2",
     "helmet": "^8.1.0",

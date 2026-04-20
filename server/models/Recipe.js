@@ -1,7 +1,6 @@
 
 //import the necessary assets
 const mongoose = require('mongoose');
-const _ = require('underscore');
 
 
 
@@ -60,8 +59,7 @@ const RecipeSchema = new mongoose.Schema({
     
     //user inputted steps
     steps: {
-        type: Map,
-        of: String,
+       type: [String],
     },
 
     //user pasted link
@@ -93,10 +91,10 @@ const RecipeSchema = new mongoose.Schema({
         type: Number,
     },
 
-    notes: {
-        type: String,
-        trim: true,
-    },
+    // notes: {
+    //     type: String,
+    //     trim: true,
+    // },
 
     //and the owner of the recipe
     owner: {
@@ -107,6 +105,5 @@ const RecipeSchema = new mongoose.Schema({
 
 });
 
-RecipeModel = mongoose.model('Recipe', RecipeSchema);
-
+const RecipeModel = mongoose.model('Recipe', RecipeSchema);
 module.exports = RecipeModel;

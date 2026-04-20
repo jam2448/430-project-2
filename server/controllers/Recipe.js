@@ -1,4 +1,4 @@
-const { sample } = require('underscore');
+
 const models = require('../models');
 const Recipe = models.Recipe;
 
@@ -27,6 +27,10 @@ const getRecipes = async (req, res) => {
 //Used to make a recipe and save the info to the database 
 const makeRecipe = async (req, res) => {
 
+    console.log('req.body:', req.body);
+    console.log('req.files:', req.files);
+    
+
 
     //if the user has not added the required data, throw an error
     if (!req.body.title || !req.body.ingredients || !req.body.time || !req.body.rating) {
@@ -40,7 +44,10 @@ const makeRecipe = async (req, res) => {
         return res.status(400).json({ error: 'You must add steps to your recipe!' });
     }
 
-    const { sampleFile } = req.files;
+    //get the samplefile only if it was uploaded. else return null
+    const sampleFile  = req.files?.sampleFile || null;
+
+    console.log('sampleFile:', sampleFile);
 
 
     //make a js object containing all of the recipe data
@@ -55,12 +62,12 @@ const makeRecipe = async (req, res) => {
         //optional things
         calories: req.body.calories,
         servings: req.body.servings,
-        notes: req.body.notes,
+        //notes: req.body.notes,
 
-        //handling the file
-        fileData: sampleFile.data,
-        fileSize: sampleFile.size,
-        mimetype: sampleFile.mimetype,
+        //handling the file only if the user has uploaded one
+        fileData: sampleFile?.data || null,
+        fileSize: sampleFile?.size || null,
+        mimetype: sampleFile?.mimetype || null,
 
         //steps and link
         steps: req.body.steps,
