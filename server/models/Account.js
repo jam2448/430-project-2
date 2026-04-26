@@ -33,6 +33,13 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  accountType: {
+    type: String,
+    default: 'Free',
+
+  },
+
   createdDate: {
     type: Date,
     default: Date.now,
@@ -43,6 +50,7 @@ const AccountSchema = new mongoose.Schema({
 AccountSchema.statics.toAPI = (doc) => ({
   username: doc.username,
   _id: doc._id,
+  accountType: doc.accountType
 });
 
 // Helper function to hash a password

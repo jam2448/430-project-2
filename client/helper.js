@@ -17,6 +17,7 @@ const sendPost = async (url, data, handler) => {
 
   const response = await fetch(url, {
     method: 'POST',
+    
     //if the data is formdata, then donr't set the header. otherwise set it to json and stringify it
     headers: isFormData ? {} : { 'Content-Type': 'application/json' },
     body: isFormData ? data : JSON.stringify(data),

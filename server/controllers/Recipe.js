@@ -1,4 +1,5 @@
 
+const { after } = require('underscore');
 const models = require('../models');
 const Recipe = models.Recipe;
 
@@ -9,28 +10,29 @@ const makerPage = async (req, res) => {
 
 };
 
+const profitModels = async (req, res) => {
+    return res.render('profitModels');
+}
+
 const getRecipes = async (req, res) => {
 
     try {
         const query = { owner: req.session.account._id };
-        const docs = await Recipe.find(query).select('title rating time').lean().exec();
+        const docs = await Recipe.find(query).select('title rating time calories').lean().exec();
 
-        return res.json({ Recipes: docs });
+        return res.json({ recipes: docs });
     } catch (err) {
 
         console.log(err);
         return res.status(500).json({ error: 'Error getting Recipes.' });
     }
 
+    console.log(recipes);
+
 };
 
 //Used to make a recipe and save the info to the database 
 const makeRecipe = async (req, res) => {
-
-    console.log('req.body:', req.body);
-    console.log('req.files:', req.files);
-    
-
 
     //if the user has not added the required data, throw an error
     if (!req.body.title || !req.body.ingredients || !req.body.time || !req.body.rating) {
@@ -45,10 +47,7 @@ const makeRecipe = async (req, res) => {
     }
 
     //get the samplefile only if it was uploaded. else return null
-    const sampleFile  = req.files?.sampleFile || null;
-
-    console.log('sampleFile:', sampleFile);
-
+    const sampleFile = req.files?.sampleFile || null;
 
     //make a js object containing all of the recipe data
     const RecipeData = {
@@ -58,7 +57,7 @@ const makeRecipe = async (req, res) => {
         ingredients: req.body.ingredients,
         time: req.body.time,
         rating: req.body.rating,
-    
+
         //optional things
         calories: req.body.calories,
         servings: req.body.servings,
@@ -92,14 +91,34 @@ const makeRecipe = async (req, res) => {
 
 const updateRecipe = (req, res) => {
 
-    //find the Recipe by the name that the user wants to delete and remove it
-    const updatePromise = Recipe.findOneAndUpdate({ title: req.body.title }, { age: req.body.age }, {
+    //get the samplefile only if it was uploaded. else return null
+    const sampleFile = req.files?.sampleFile || null;
+
+    //find the Recipe by the id that the user wants to update and update the data
+    const updatePromise = Recipe.findByIdAndUpdate(req.body._id,
+        {
+            title: req.body.title,
+            time: req.body.time,
+            rating: req.body.rating,
+            calories: req.body.calories,
+            fileData: sampleFile?.data || null,
+            fileSize: sampleFile?.size || null,
+            mimetype: sampleFile?.mimetype || null,
+            steps: req.body.steps,
+            link: req.body.link,
+
+
+        }, {
         returnDocument: 'after',
     }).lean().exec();
 
     updatePromise.then((doc) => res.json({
         title: doc.title,
-        //age: doc.age,
+        time: doc.time,
+        rating: doc.rating,
+        calories: doc.calories,
+        steps: doc.steps,
+        link: doc.link,
     }));
 
     //catch an error
@@ -114,9 +133,30 @@ const updateRecipe = (req, res) => {
 
 };
 
+const deleteRecipe = (req, res) => {
+
+
+    console.log(req.body.title);
+
+
+    const deletePromise = Recipe.findOneAndDelete({ title: req.body.title }, {
+        returnDocument: 'after',
+    }).exec();
+    deletePromise.then(() => {
+        return res.status(200).json({ message: 'Recipe added Successfully' })
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json({ error: 'Something went wrong' });
+    });
+}
+
+
+
 module.exports = {
     makerPage,
     makeRecipe,
     getRecipes,
     updateRecipe,
+    profitModels,
+    deleteRecipe,
 }

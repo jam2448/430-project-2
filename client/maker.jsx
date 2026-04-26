@@ -6,6 +6,15 @@ const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
 
+//import all of the fontawesome icons into the react app. 
+//I am pulling the below code from the fontawesome docs: 
+// https://docs.fontawesome.com/web/use-with/react/add-icons#add-icons-using-svg-icon-packages
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { deleteModel } from 'mongoose';
+
+
 
 const handleRecipe = (e, onRecipeAdded, ingredients, manualSteps) => {
     e.preventDefault();
@@ -67,31 +76,77 @@ const handleRecipe = (e, onRecipeAdded, ingredients, manualSteps) => {
 
     }
 
-    console.log(formedRecipe);
-
     helper.sendPost(e.target.action, formedRecipe, onRecipeAdded);
     return false;
 }
 
-const handleUpdate = (e, onRecipeUpdated) => {
+const handleUpdate = (e, onRecipeUpdated, recipeID, close) => {
 
     e.preventDefault();
     helper.hideError();
 
-    const name = e.target.querySelector("#name").value;
-    const age = e.target.querySelector('#age').value;
+    //get the value from all of the fields that the user puts data into
+    //start with the required fields
+    const title = e.target.querySelector("#title").value;
+    const time = e.target.querySelector('#time').value;
+    const rating = e.target.querySelector('#rating').value;
 
-    if (!name || !age) {
-        helper.handleError("All Update fields are required");
-        return false;
+    //get the method of the steps here and see what they selected 
+    const stepsMethod = e.target.querySelector('#stepsMethod').value;
+
+    //optinal fields
+    const calories = e.target.querySelector('#calories').value;
+    const servings = e.target.querySelector('#servings').value;
+
+    const formedRecipe = new FormData();
+    formedRecipe.append('_id', recipeID);
+    formedRecipe.append('title', title);
+    formedRecipe.append('time', time);
+    formedRecipe.append('rating', rating);
+    formedRecipe.append('calories', calories);
+    formedRecipe.append('servings', servings);
+
+
+    //depending on the steps method add the correct info to the formData:
+    //manual steps: get each step from the array and add it to the fromData steps array
+    if (stepsMethod === 'manually') {
+        manualSteps.forEach((step) => {
+            formedRecipe.append('steps', step.typedStep);
+        });
+
+    }
+    else if (stepsMethod === 'link') {
+        //if its a link, then just get the link and add it
+        const link = e.target.querySelector('#link').value;
+        formedRecipe.append('link', link);
+    }
+    else if (stepsMethod === 'fileUpload') {
+
+        //if the user wants to upload the file, get the file and add it
+        const uploadedFile = e.target.querySelector('#uploadedFile').files[0];
+
+        formedRecipe.append('sampleFile', uploadedFile);
     }
 
-    helper.sendPost(e.target.action, { name, age }, onRecipeUpdated);
+
+
+    helper.sendPost(e.target.action, formedRecipe, onRecipeUpdated);
+    close();
     return false;
 
 }
 
+const deleteRecipe = (e, recipeTitle, onRecipeDeleted) => {
 
+    //delete the recipe when the user clicks the trashcan icon
+    e.preventDefault();
+    helper.hideError();
+
+
+    helper.sendPost('/deleteRecipe', { title: recipeTitle }, onRecipeDeleted);
+    return false;
+
+};
 
 
 
@@ -139,6 +194,7 @@ const RecipeForm = (props) => {
         setIngredients([...ingredients, { ingredientName: '' }]);
     }
 
+
     {/* hook to handle the ingredient form when it is edited*/ }
     const [ingredients, setIngredients] = useState([{ ingredientName: '' }]);
 
@@ -163,7 +219,7 @@ const RecipeForm = (props) => {
                 {
                     close => (
                         <form id='recipeForm'
-                            onSubmit={(e) => handleRecipe(e, props.triggerReload, ingredients, manualSteps)}
+                            onSubmit={(e) => { handleRecipe(e, props.triggerReload, ingredients, manualSteps); close(); }}
                             name='recipeForm'
                             action='/maker'
                             method='POST'
@@ -271,7 +327,7 @@ const RecipeForm = (props) => {
                             <label htmlFor="rating">Rating: </label>
                             <input id="rating" type="number" name="rating" min="0" max="10" />
 
-
+                            {/* sumbit and close the popup window */}
                             <input type="submit" className='makeRecipeSubmit' value="Add Recipe" />
                         </form>
                     )
@@ -286,7 +342,60 @@ const RecipeForm = (props) => {
     );
 };
 
+//form used to update and change the data within a recipe
 const UpdateForm = (props) => {
+
+    //handles when the user modifies one of the ingredients so that it gets handles properly 
+    const handleIngredientChange = (e, index) => {
+
+        //get the name of the ingredient to be modified
+        const ingName = e.target.name;
+
+        //create a copy of the ing. array to not directly modify the original
+        const newIngredients = [...ingredients];
+
+        newIngredients[index][ingName] = e.target.value;
+        setIngredients(newIngredients);
+
+    };
+
+    //handle when a step is changed
+    const stepChange = (e, index) => {
+
+        //get the name of the step to be modified
+        const stepName = e.target.name;
+
+        //create a copy of the step. array to not directly modify the original
+        const newSteps = [...manualSteps];
+
+        newSteps[index][stepName] = e.target.value;
+        setSteps(newSteps);
+
+    };
+
+    const stepMethodChange = (e) => {
+        setStepsMethod(e.target.value);
+    }
+
+    //create a new textfield for when the user wants to add another step
+    const addStep = (e, index) => {
+        setSteps([...manualSteps, { typedStep: '' }])
+    };
+
+    //Creates a new input field for the user to add a new ingredient to the list
+    const AddIngredient = () => {
+        setIngredients([...ingredients, { ingredientName: '' }]);
+    }
+
+
+    {/* hook to handle the ingredient form when it is edited*/ }
+    const [ingredients, setIngredients] = useState([{ ingredientName: '' }]);
+
+    {/* hook to handle the steps method functionality and when the use changes their oprions */ }
+    const [stepsMethod, setStepsMethod] = useState('manually');
+
+    {/* hook to handle when the list of manual steps are changed*/ }
+    const [manualSteps, setSteps] = useState([{ typedStep: '' }])
 
     return (
 
@@ -294,13 +403,86 @@ const UpdateForm = (props) => {
             name='updateForm'
             className='recipeForm'
             method='POST'
-            onSubmit={(e) => handleUpdate(e, props.triggerReload)}>
+            onSubmit={(e) => { handleUpdate(e, props.triggerReload, props.id, props.closePopup); }}>
 
-            <label htmlFor="name"> Name: </label>
-            <input id='name' type="text" name='name' placeholder='Recipe Update Name' />
+            <label htmlFor="name"> Recipe Title: </label>
+            <input id='title' type="text" name='title' placeholder='Update Recipe Title' />
 
-            <label htmlFor="age">Updated Age: </label>
-            <input id="age" type="number" name="age" min="0" />
+            <label htmlFor="rating">Updated Rating: </label>
+            <input id="rating" type="number" name="rating" min="0" max='10' />
+
+            <label htmlFor="time">Total Cook Time: </label>
+            <input id="time" type="text" name="time" placeholder='Enter Cook Time...' />
+
+            <br />
+            <label htmlFor="calories">Calories: </label>
+            <input id="calories" type="text" name="calories" placeholder='Calorie Amount..' />
+
+            <label htmlFor="servings">Servings: </label>
+            <input id="servings" type="text" name="servings" placeholder='Servings' />
+
+            {/* this is to handle the three options that the user has to 
+                enter the steps to cook the meal.
+                - Enter manually: an array of strings where the user types in the steps
+                - link: the user enters a link to where they got the recipe/the steps
+                - file upload: the user can upload a document or image of the steps 
+                - ONE of the three is mandatory */}
+            <label htmlFor="stepsMethod">Steps Method</label>
+            <select name="stepsMethod"
+                id="stepsMethod" value={stepsMethod}
+                onChange={(e) => stepMethodChange(e)}>
+                <option value="manually">Enter Manually</option>
+                <option value="link">Link</option>
+                <option value="fileUpload">Upload File</option>
+            </select>
+
+            {/* render a specfic set of html based on what the user selected from the dropdown */}
+            {stepsMethod === 'manually' && (
+
+                //if it is steps, make a dynamic list for the user to enter the steps
+                <div id='manualSteps'>
+                    <label htmlFor="steps"> Enter Steps Here: </label>
+
+                    {/* use the same dynamic list structure as the ingredients */}
+                    {manualSteps.map((step, index) => (
+
+                        <div key={index}>
+
+                            <input id="typedStep" type="text"
+                                name="typedStep" placeholder='Enter Step...'
+                                value={step.typedStep}
+                                onChange={(e) => stepChange(e, index)} />
+
+
+                        </div>
+
+                    ))}
+                    <button type='button' onClick={addStep}>Add Step</button>
+
+
+
+                </div>
+            )}
+
+
+            {stepsMethod === 'link' && (
+
+                //if they choose link, then just make a text box to enter the link to the recipe
+                <div id='linkSteps'>
+                    <label htmlFor="link">Link To Recipe: </label>
+                    <input id="link" type="text" name="link" placeholder='Recipe Link...' />
+
+                </div>
+            )}
+
+            {stepsMethod === 'fileUpload' && (
+
+                //if a fileupload, then make a button to upload the file
+
+                <div id='fileSteps'>
+                    <input id='uploadedFile' type="file" name="sampleFile" />
+                </div>
+            )}
 
             <input type="submit" className='makeRecipeSubmit' value="Update Recipe" />
 
@@ -310,6 +492,8 @@ const UpdateForm = (props) => {
     );
 }
 
+
+//fetches the recipe list from the db and displays it if there are any
 const RecipeList = (props) => {
 
     const [recipes, setRecipes] = useState(props.recipes || []);
@@ -333,14 +517,31 @@ const RecipeList = (props) => {
         );
     }
 
+    //display information about the recipe on the page as a card
     const recipeNodes = recipes.map(recipe => {
+
         return (
 
             <div key={recipe.id} className='recipe'>
-                <img src="/assets/img/domoface.jpeg" alt="recipe face" className='recipeFace' />
-                <h3 className='recipeName'> Name: {recipe.name}</h3>
-                <h3 className='recipeDiet'> Diet: {recipe.diet}</h3>
-                <h3 className='recipeAge'> Age: {recipe.age}</h3>
+                <img src="/assets/img/domoface.jpeg" alt="domo face" className='recipeFace' />
+                <h3 className='recipeName'> Title: {recipe.title}</h3>
+                <h3 className='recipeRating'> Rating: {recipe.rating}</h3>
+                <h3 className='recipeTime'> Cook Time: {recipe.time}</h3>
+                <h3 className='recipeCalories'> Calories: {recipe.calories}</h3>
+
+                {/* Allow the user to open the edit form in a popup window when they click the icon button */}
+                <Popup trigger={<FontAwesomeIcon icon={faPenToSquare} />} modal nested>
+                    {
+                        close => (
+                            //open up the update form when the edit button is clicked
+                            <UpdateForm triggerReload={props.triggerReload} id={recipe._id} closePopup={close} />
+                        )
+                    }
+
+
+                </Popup>
+
+                <button><FontAwesomeIcon icon={faTrashCan} onClick={(e) => deleteRecipe(e, recipe.title, props.triggerReload)} /> </button>
             </div>
         );
     });
@@ -361,17 +562,13 @@ const App = () => {
 
         <div>
             <div id='makeRecipe'>
-                <RecipeForm triggerReload={() => setReloadRecipes(!reloadRecipes)} />
+                <RecipeForm triggerReload={() => setReloadRecipes(!reloadRecipes)} closePopup={close} />
 
             </div>
-            {/* <div id='updateRecipe'>
 
-                <UpdateForm triggerReload={() => setReloadRecipes(!reloadRecipes)} />
-
-            </div> */}
 
             <div id='recipes'>
-                <RecipeList recipes={[]} reloadRecipes={reloadRecipes} />
+                <RecipeList recipes={[]} reloadRecipes={reloadRecipes} triggerReload={() => setReloadRecipes(!reloadRecipes)} />
 
             </div>
         </div>
