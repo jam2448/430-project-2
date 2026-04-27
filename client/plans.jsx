@@ -6,10 +6,6 @@ const { useState, useEffect } = React;
 
 
 
-
-
-
-
 //setup the window of the two plans
 
 const PlanWindow = (props) => {
@@ -76,19 +72,6 @@ const handlePlanChange = (e) => {
     );
 
 }
-
-// const PlanPage = () => {
-
-//     //creating a reload hook to auto reload the page when changed
-//     const [reload, setReload] = useState(false);
-
-//     return(
-//         <PlanWindow triggerReload={() => setReload(!reload)}/>
-//     );
-
-
-
-// }
 
 const init = () => {
     const root = createRoot(document.getElementById('profitModels'));

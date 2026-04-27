@@ -79,7 +79,7 @@ const signup = async (req, res) => {
 };
 
 //allows the user to change their password 
-const changePassword = (req, res) => {
+const changePassword = async (req, res) => {
 
     const currentPassword = `${req.body.currentPassword}`;
     const newPassword = `${req.body.newPassword}`;
@@ -104,34 +104,50 @@ const changePassword = (req, res) => {
         return res.status(400).json({ error: "All fields are required" });
     }
 
-    //first authenticate the cureent password 
-    Account.authenticate( currentPassword, (err, account) => {
-        if(err || !account) {
 
-            return res.status(401).json({ error: "current password is incorrect." });
+
+    //replace the old password with the new one
+    try {
+
+        //first authenticate the cureent password 
+        Account.authenticate(req.session.account.username, currentPassword, (err, account) => {
+            if (err || !account) {
+
+                return res.status(401).json({ error: "current password is incorrect." });
+            }
+        });
+
+        //generate a new hashed password with the new password
+        const newHash = await Account.generateHash(newPassword);
+
+        //find the account in the db and replace the old passsword with the new one
+        const updatedAccount = await Account.findOneAndUpdate({ username: req.session.account.username },
+            {
+                password: newHash
+
+            },
+            {
+                returnDocument: 'after',
+            }
+
+        ).exec();
+
+        //update the session to refelct the change
+        req.session.account = Account.toAPI(updatedAccount);
+
+        //return a successful message
+        return res.status(200).json({ message: 'Password changed successfully' });
+
+    } catch (err) {
+
+        console.log(err);
+        if (err.message === "Current password is incorrect.") {
+            return res.status(401).json({ error: err.message });
         }
 
-        //then replace the old password with the new one.
-        
+        return res.status(500).json({ error: 'An error occurred' });
 
-
-    })
-
-
-    /*
-    
-    return Account.authenticate(username, pass, (err, account) => {
-        if (err || !account) {
-            return res.status(401).json({ error: "wrong username or password" });
-        }
-
-        req.session.account = Account.toAPI(account);
-
-        return res.json({ redirect: '/maker' });
-    });
-
-    
-    */ 
+    }
 
 
 

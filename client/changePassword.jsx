@@ -47,7 +47,7 @@ const handlePassChange = (e) => {
 
 //window that allows the user to change their password to a new one via
 //a form
-const changePassWindow = (props) => {
+const ChangePassWindow = (props) => {
 
     return (
 
@@ -57,7 +57,7 @@ const changePassWindow = (props) => {
         <form id='changePassForm'
             name='chnagePassForm'
             onSubmit={handlePassChange}
-            action="/changePasswword"
+            action="/changePassword"
             method="POST"
             className='mainForm'>
 
@@ -71,7 +71,7 @@ const changePassWindow = (props) => {
             <label htmlFor="confirmNew ">Confirm New Password:</label>
             <input id='confirmNew' type="text" name='confirmNew' placeholder='Confirm New Password' />
 
-            <input type="submit" className='formSubmit' value='Save Password' />
+            <input type="submit" className='saveButton' value='Save Password' />
 
 
         </form>
@@ -85,8 +85,8 @@ const changePassWindow = (props) => {
 const init = () => {
 
     const root = createRoot(document.getElementById('content'));
-    root.render(<changePassWindow />);
+    root.render(<ChangePassWindow />);
 
 }
 
-window.onload = init();
+window.onload = init;
