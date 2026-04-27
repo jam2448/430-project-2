@@ -10,7 +10,11 @@ const loginPage = (req, res) => {
 
 //retuns information about the account to updat the buttons dynamically
 const getAccount = (req, res) => {
-    return res.json({accountType: req.session.account.accountType});
+    return res.json({ accountType: req.session.account.accountType });
+}
+
+const changePassPage = (req, res) => {
+    return res.render('changePass');
 }
 
 
@@ -74,6 +78,66 @@ const signup = async (req, res) => {
 
 };
 
+//allows the user to change their password 
+const changePassword = (req, res) => {
+
+    const currentPassword = `${req.body.currentPassword}`;
+    const newPassword = `${req.body.newPassword}`;
+    const confirmPassword = `${req.body.confirmNew}`;
+
+    //if the new password is the same as the current, tell them it cannot be the same password
+    if (currentPassword === newPassword) {
+
+        return res.status(400).json({ error: "Current and new password cannot match" });
+
+    }
+
+    //if the new and confirmed password don't match then say they don't match
+    if (newPassword !== confirmPassword) {
+
+        return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    //return an error if nothing was entered into every field as they are all required
+    if (!currentPassword || !newPassword || !confirmPassword) {
+
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    //first authenticate the cureent password 
+    Account.authenticate( currentPassword, (err, account) => {
+        if(err || !account) {
+
+            return res.status(401).json({ error: "current password is incorrect." });
+        }
+
+        //then replace the old password with the new one.
+        
+
+
+    })
+
+
+    /*
+    
+    return Account.authenticate(username, pass, (err, account) => {
+        if (err || !account) {
+            return res.status(401).json({ error: "wrong username or password" });
+        }
+
+        req.session.account = Account.toAPI(account);
+
+        return res.json({ redirect: '/maker' });
+    });
+
+    
+    */ 
+
+
+
+
+};
+
 //update the user's account plan to free or premium based on what the user says
 const updatePlan = async (req, res) => {
 
@@ -83,7 +147,7 @@ const updatePlan = async (req, res) => {
 
     //update the plan of the account
     try {
-        const updateAccount = await Account.findOneAndUpdate({_id: accountID}, {
+        const updateAccount = await Account.findOneAndUpdate({ _id: accountID }, {
             accountType: planToSwitch,
         },
             { returnDocument: 'after' }
@@ -92,17 +156,18 @@ const updatePlan = async (req, res) => {
         //update the session to refelct the change
         req.session.account = Account.toAPI(updateAccount);
 
-        return res.json({accountType: updateAccount.plan});
+        return res.json({ accountType: updateAccount.plan });
 
-    } catch(err) {
+    } catch (err) {
 
         console.log(err);
         return res.status(500).json({ error: 'An error occurred' });
-        
+
     }
 
 }
 
 module.exports = {
-    loginPage, login, logout, signup, updatePlan, getAccount
+    loginPage, login, logout, signup, updatePlan, getAccount, changePassPage,
+    changePassword
 };

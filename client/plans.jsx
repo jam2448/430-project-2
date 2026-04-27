@@ -5,18 +5,7 @@ const { createRoot } = require('react-dom/client');
 const { useState, useEffect } = React;
 
 
-//sends a post request to the helper when the user clicks a button to change
-//their plan
-const handlePlanChange = (e) => {
 
-    e.preventDefault();
-    helper.hideError();
-
-    const plan = e.target.value;
-
-    helper.sendPost('/updatePlan', { plan });
-    //window.location.reload(false);
-}
 
 
 
@@ -39,6 +28,20 @@ const PlanWindow = (props) => {
         };
         loadPlan();
     }, []);
+
+    //sends a post request to the helper when the user clicks a button to change
+//their plan
+const handlePlanChange = (e) => {
+
+    e.preventDefault();
+    helper.hideError();
+
+    const newPlan = e.target.value;
+
+    helper.sendPost('/updatePlan', { newPlan });
+    setPlan(newPlan);
+    //window.location.reload(false);
+}
 
     return (
 
