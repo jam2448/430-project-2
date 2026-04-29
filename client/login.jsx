@@ -22,7 +22,6 @@ const hanldeLogin = (e) => {
 
 };
 
-
 const handleSignup = (e) => {
 
     e.preventDefault();

@@ -40,8 +40,6 @@ const handlePassChange = (e) => {
     //send the post request
     helper.sendPost(e.target.action, { currentPassword, newPassword, confirmNew });
     return false;
-
-
 };
 
 
@@ -84,7 +82,6 @@ const ChangePassWindow = (props) => {
                 <input id='confirmNew' type="text" name='confirmNew' placeholder='Confirm New Password' />
 
             </div>
-
 
             <input type="submit" className='saveButton' value='Save Password' />
 

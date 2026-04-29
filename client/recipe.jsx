@@ -28,8 +28,6 @@ const RecipePage = (props) => {
         loadRecipe();
     }, []);
 
-    console.log(recipe);
-
     //Safeguard against the app crashing when it is fetching the recipe
     if (!recipe) return <h1>Loading...</h1>
 
@@ -74,11 +72,6 @@ const RecipePage = (props) => {
                     </ul>
 
                 </div>
-
-
-
-
-
 
                 {recipe.link && (
 

@@ -380,7 +380,6 @@ const UpdateForm = (props) => {
         //depending on the steps method add the correct info to the formData:
         //manual steps: get each step from the array and add it to the fromData steps array
         if (stepsMethod === 'manually' && manualSteps.length !== 0) {
-            console.log(manualSteps);
             manualSteps.forEach((step) => {
                 formedRecipe.append('steps', step.typedStep);
             });
