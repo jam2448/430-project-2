@@ -1,0 +1,174 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+* {
+
+    font-family: 'Quicksand', sans-serif;
+}
+
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+#logo {
+    height: 40px;
+    width: 40;
+    padding-top: 5px;
+    padding-left: 15px;
+    float: left;
+    border-radius: 8px;
+}
+
+nav {
+    width: 100%;
+    height: 50px;
+    background-color: #250001;
+}
+
+nav:nth-child(1) {
+    padding-left: 25px;
+}
+
+.navlink {
+    padding: 5px;
+    padding-top: 12px;
+    padding-left: 20px;
+    color: white;
+    font-size: 1.3em;
+    float: left;
+}
+
+.navlink a,
+.navlink a:link,
+.navlink a:visited,
+.navlink a:hover,
+.navlink a:active {
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #250001;
+    transition: background-color 0.4s ease;
+}
+
+.navlink a:hover {
+    transition: background-color 0.8s ease;
+    background-color: #590004;
+}
+
+
+#recipeContent {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+
+
+}
+
+#basicInfo {
+    display: flex;
+    max-width: 800px;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 50px;
+
+    background-color: #590004;
+    border: 5px solid #250001;
+    border-radius: 10px;
+    color: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 1rem;
+
+}
+
+#basicInfo h2 {
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+#servings,
+#calories,
+#cookTime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+#servingsData,
+#caloriesData,
+#timeData {
+
+    color: #fcba04;
+    padding: 10px;
+}
+
+#recipeContent h1 {
+
+    color: #590004;
+    font-size: 2.5rem;
+}
+
+/* #recipeContent h2 {} */
+
+#detailedInfo {
+
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #590004;
+    border: 5px solid #250001;
+    border-radius: 10px;
+
+}
+
+#detailedInfo h3 {
+    color: #fcba04;
+    font-size: 1.5rem;
+    max-width: fit-content;
+}
+
+#linkData{
+    color: white;
+    font-size: 1.25rem;
+    font-weight:600;
+} 
+
+
+ul, ol {
+
+    color: white;
+    font-size: 1.25rem;
+    line-height: 1.8;
+    
+}
+
+#downloadButton {
+
+    background-color: #250001;
+    border: 3px solid #fcba04;
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+}
+
+#downloadButton:hover {
+
+    background-color: #fcba04;
+}

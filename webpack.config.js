@@ -9,6 +9,7 @@ module.exports = {
         login: './client/login.jsx',
         plans: './client/plans.jsx',
         changePassword: './client/changePassword.jsx',
+        recipe: './client/recipe.jsx',
     },
 
     module: {

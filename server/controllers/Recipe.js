@@ -1,24 +1,29 @@
 
-const { after } = require('underscore');
 const models = require('../models');
 const Recipe = models.Recipe;
 
-
-
 const makerPage = async (req, res) => {
     return res.render('app');
-
 };
 
 const profitModels = async (req, res) => {
     return res.render('profitModels');
 }
 
+const recipePage = async (req, res) => {
+    return res.render('recipe');
+}
+
+const notFound = async (req, res) => {
+    return res.render('notFound');
+};
+
+//get all of the recipes
 const getRecipes = async (req, res) => {
 
     try {
         const query = { owner: req.session.account._id };
-        const docs = await Recipe.find(query).select('title rating time calories').lean().exec();
+        const docs = await Recipe.find(query).select('title rating time calories ingredients steps link fileData servings').lean().exec();
 
         return res.json({ recipes: docs });
     } catch (err) {
@@ -27,12 +32,22 @@ const getRecipes = async (req, res) => {
         return res.status(500).json({ error: 'Error getting Recipes.' });
     }
 
-    console.log(recipes);
-
 };
 
 //Used to make a recipe and save the info to the database 
 const makeRecipe = async (req, res) => {
+
+    //count the amounbt of recipes the user has in the db by using 
+    //countDocuments mongoose function
+    const recipeCount = await Recipe.countDocuments({ owner: req.session.account._id })
+
+    //if this user is on the free plan and they try to make a recipe after making 3
+    //tell them that they need to upgrade to premium to get unlimited
+
+    if (recipeCount >= 3 && req.session.account.accountType === 'Free') {
+
+        return res.status(400).json({ error: 'Upgrade to Premium to get unlimited Recipes' });
+    }
 
     //if the user has not added the required data, throw an error
     if (!req.body.title || !req.body.ingredients || !req.body.time || !req.body.rating) {
@@ -67,6 +82,7 @@ const makeRecipe = async (req, res) => {
         fileData: sampleFile?.data || null,
         fileSize: sampleFile?.size || null,
         mimetype: sampleFile?.mimetype || null,
+        fileName: sampleFile?.name ||null,
 
         //steps and link
         steps: req.body.steps,
@@ -89,50 +105,54 @@ const makeRecipe = async (req, res) => {
     }
 }
 
-const updateRecipe = (req, res) => {
+//update a recipe
+const updateRecipe = async (req, res) => {
 
-    //get the samplefile only if it was uploaded. else return null
+    //only get the samplefile if it was uploaded
     const sampleFile = req.files?.sampleFile || null;
 
-    //find the Recipe by the id that the user wants to update and update the data
-    const updatePromise = Recipe.findByIdAndUpdate(req.body._id,
-        {
-            title: req.body.title,
-            time: req.body.time,
-            rating: req.body.rating,
-            calories: req.body.calories,
-            fileData: sampleFile?.data || null,
-            fileSize: sampleFile?.size || null,
-            mimetype: sampleFile?.mimetype || null,
-            steps: req.body.steps,
-            link: req.body.link,
+    //only include fields that were actually submitted
+    const updates = {};
 
+    //check and see if any of the fields have input
+    if (req.body.title) updates.title = req.body.title;
+    if (req.body.time) updates.time = req.body.time;
+    if (req.body.rating) updates.rating = req.body.rating;
+    if (req.body.calories) updates.calories = req.body.calories;
+    if (req.body.steps) updates.steps = req.body.steps;
+    if (req.body.link) updates.link = req.body.link;
 
-        }, {
-        returnDocument: 'after',
-    }).lean().exec();
+    // only update file fields if a new file was uploaded
+    if (sampleFile) {
+        updates.fileData = sampleFile.data;
+        updates.fileSize = sampleFile.size;
+        updates.mimetype = sampleFile.mimetype;
+        updates.fileName = sampleFile.name;
+    }
 
-    updatePromise.then((doc) => res.json({
-        title: doc.title,
-        time: doc.time,
-        rating: doc.rating,
-        calories: doc.calories,
-        steps: doc.steps,
-        link: doc.link,
-    }));
+    try {
+        const doc = await Recipe.findByIdAndUpdate(
+            req.body._id,
+            { $set: updates },  // only updates the fields in the updates object
+            { returnDocument: 'after' }
+        ).lean().exec();
 
-    //catch an error
-    updatePromise.catch((err) => {
+        return res.json({ 
+            title: doc.title,
+            time: doc.time,
+            rating: doc.rating,
+            calories: doc.calories,
+            steps: doc.steps,
+            link: doc.link,
+        });
 
+    } catch(err) {
         console.log(err);
         return res.status(500).json({ error: 'Something went wrong' });
-
-    });
-
-
-
+    }
 };
 
+//delete a recipe
 const deleteRecipe = (req, res) => {
 
 
@@ -150,6 +170,51 @@ const deleteRecipe = (req, res) => {
     });
 }
 
+//if the user uploaded a file, this function retrieves it so taht it can be downloaded on the 
+//recipe page
+const getFile = async (req, res) => {
+
+    try {
+        const recipe = await Recipe.findById(req.params.id);
+
+        if (!recipe || !recipe.fileData) {
+            return res.status(404).json({ error: 'No file found' });
+        }
+
+        res.set('Content-Type', recipe.mimetype);
+        res.set('Content-Disposition', `attachment; filename="${recipe.fileName}"`);
+        res.send(recipe.fileData);
+
+
+    } catch (err) {
+
+        console.log(err);
+        return res.status(500).json({ error: 'Error downloading file' });
+    }
+
+
+
+}
+
+//gets informaation about a single recipe by finding the recipe by id
+const getRecipe = async (req, res) => {
+
+    try {
+
+        const recipe = await Recipe.findById(req.params.id);
+        if (!recipe) return res.status(404).json({ error: 'Recipe not found' });
+
+        return res.status(200).json({ recipe });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({ error: 'Error getting recipe' });
+    }
+};
+
+
 
 
 module.exports = {
@@ -159,4 +224,8 @@ module.exports = {
     updateRecipe,
     profitModels,
     deleteRecipe,
+    recipePage,
+    getFile,
+    getRecipe,
+    notFound
 }

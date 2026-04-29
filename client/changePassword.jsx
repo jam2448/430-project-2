@@ -26,7 +26,7 @@ const handlePassChange = (e) => {
     //if the new and confirmed password don't match then say they don't match
     if (newPassword !== confirmNew) {
 
-        helper.hideError('Passwords do not mmatch');
+        helper.handleError('Passwords do not match');
         return false;
     }
 
@@ -62,17 +62,31 @@ const ChangePassWindow = (props) => {
             className='mainForm'>
 
             {/* build the form with the apropriate text fields */}
-            <label htmlFor="currentPass">Current Password:</label>
-            <input id='currentPass' type="text" name='currentPass' placeholder='Current Password' />
+            <div id='currentContainer'>
 
-            <label htmlFor="newPass">New Password:</label>
-            <input id='newPass' type="text" name='currentPass' placeholder='New Password' />
+                <label htmlFor="currentPass">Current Password:</label>
+                <input id='currentPass' type="text" name='currentPass' placeholder='Current Password' />
 
-            <label htmlFor="confirmNew ">Confirm New Password:</label>
-            <input id='confirmNew' type="text" name='confirmNew' placeholder='Confirm New Password' />
+            </div>
+
+
+            <div id='newContainer'>
+
+                <label htmlFor="newPass">New Password:</label>
+                <input id='newPass' type="text" name='currentPass' placeholder='New Password' />
+
+            </div>
+
+
+            <div id='confirmContainer'>
+
+                <label htmlFor="confirmNew ">Confirm New Password:</label>
+                <input id='confirmNew' type="text" name='confirmNew' placeholder='Confirm New Password' />
+
+            </div>
+
 
             <input type="submit" className='saveButton' value='Save Password' />
-
 
         </form>
 

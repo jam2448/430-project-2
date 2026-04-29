@@ -26,19 +26,19 @@ const PlanWindow = (props) => {
     }, []);
 
     //sends a post request to the helper when the user clicks a button to change
-//their plan
-const handlePlanChange = (e) => {
+    //their plan
+    const handlePlanChange = (e) => {
 
-    e.preventDefault();
-    helper.hideError();
+        e.preventDefault();
+        helper.hideError();
 
-    const newPlan = e.target.value;
+        const newPlan = e.target.value;
 
-    helper.sendPost('/updatePlan', { newPlan });
-    setPlan(newPlan);
-    //window.location.reload(false);
-}
+        helper.sendPost('/updatePlan', { newPlan });
+        setPlan(newPlan);
+    }
 
+    //return the two plans: free and premium 
     return (
 
         <div id='plans'>
@@ -51,7 +51,7 @@ const handlePlanChange = (e) => {
 
                 {/* change the button text based on the plan the account has */}
                 <button id="freeButton" value='Free' onClick={handlePlanChange}>
-                    {plan === 'Free' ?  'Active Plan' : 'Choose Plan'}  
+                    {plan === 'Free' ? 'Active Plan' : 'Choose Plan'}
                 </button>
 
             </div>
@@ -64,7 +64,7 @@ const handlePlanChange = (e) => {
                 </ul>
                 {/* change the button text based on the plan the account has */}
                 <button id="premiumButton" value='Premium' onClick={handlePlanChange}>
-                    {plan === 'Premium' ?  'Active Plan' : 'Choose Plan'}  
+                    {plan === 'Premium' ? 'Active Plan' : 'Choose Plan'}
                 </button>
             </div>
 
@@ -75,7 +75,7 @@ const handlePlanChange = (e) => {
 
 const init = () => {
     const root = createRoot(document.getElementById('profitModels'));
-    root.render(<PlanWindow/>);
+    root.render(<PlanWindow />);
 }
 
 window.onload = init;

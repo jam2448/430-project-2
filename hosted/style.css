@@ -1,4 +1,12 @@
-html, body {
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+* {
+
+    font-family: 'Quicksand', sans-serif;
+}
+
+html,
+body {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -10,14 +18,15 @@ html, body {
     height: 40px;
     width: 40;
     padding-top: 5px;
-    float:left;
+    padding-left: 15px;
+    float: left;
     border-radius: 8px;
 }
 
 nav {
     width: 100%;
     height: 50px;
-    background-color: #55acee;
+    background-color: #250001;
 }
 
 nav:nth-child(1) {
@@ -33,61 +42,132 @@ nav:nth-child(1) {
     float: left;
 }
 
-.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
+.navlink a,
+.navlink a:link,
+.navlink a:visited,
+.navlink a:hover,
+.navlink a:active {
     color: white;
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: #250001;
     transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
     transition: background-color 0.8s ease;
-    background-color: #66bdff;
+    background-color: #590004;
+}
+
+#createButton {
+    border: 3px solid #250001;
+    background-color: #590004;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 10px;
+}
+
+#createButton:hover {
+    background-color: #fcba04;
+    color: black;
+}
+
+#createDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .recipeForm {
-    border: 2px solid #338acc;
-    height: 555px;
-    width: 900px;
-    margin-top:0px;
-    padding-top:10px;
-    background-color: #55acee;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    margin: 50px 20px 20px 20px;
+    background-color: #250001;
+
+    border: 5px solid #590004;
+    border-radius: 10px;
+    max-width: 600px;
+    padding: 25px;
+    padding-top: 50px;
+    margin-top: 25px;
+
+    overflow-y: auto;
+    max-height: 80vh;
+    overflow-x: hidden;
+}
+
+.recipeForm h2 {
+    color: #fcba04;
+    font-size: 2rem;
 }
 
 .recipeForm label {
     display: inline-block;
-    width: 75px;
     margin-left: 10px;
-    font-size: 1em;
-    float: left;
+    font-size: 1.25em;
+    justify-content: start;
     color: white;
 }
 
-.recipeForm input[type=text] {
-    float:left;
+.recipeForm input[type=text],
+.recipeForm input[type='number'],
+.recipeForm select {
+
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 3px solid #250001;
+    border-radius: 8px;
+    background-color: #590004;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
-.makeRecipeSubmit {
+.recipeForm input[type=submit],
+#uploadedFile  {
+
     transition: background-color 0.4s ease;
-    display: inline;
-    width: 90px;
-    background-color: #55acee;
-    border-radius: 2px;
+    border: 3px solid #250001;
+    background-color: #590004;
     color: white;
-    text-decoration: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 10px;
+
 }
 
-.makeRecipeSubmit:link, .makeRecipeSubmit:visited, .makeRecipeSubmit:hover, .makeRecipeSubmit:active {
-    color: white;
+
+#submitRecipe:hover,
+#addIngredient:hover,
+#addStep:hover {
+
+    background-color: #fcba04;
+    color: black;
+
 }
 
-.makeRecipeSubmit:hover {
-    transition: background-color 0.4s ease;
-    background-color: #338acc;
+
+#addIngredient,
+#addStep,
+#submitRecipe {
+
+    border: 3px solid #250001;
+    background-color: #590004;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 5px;
+
 }
 
 .mainForm {
@@ -126,7 +206,10 @@ nav:nth-child(1) {
     text-decoration: none;
 }
 
-.formSubmit:link, .formSubmit:visited, .formSubmit:hover, .formSubmit:active {
+.formSubmit:link,
+.formSubmit:visited,
+.formSubmit:hover,
+.formSubmit:active {
     color: white;
 }
 
@@ -135,14 +218,18 @@ nav:nth-child(1) {
     background-color: #338acc;
 }
 
-#user, #pass, #pass2 {
+#user,
+#pass,
+#pass2 {
     text-align: center;
     font-size: 1.1em;
     width: 180px;
     border-radius: 6px;
 }
 
-#user:focus, #pass:focus, #pass2:focus {
+#user:focus,
+#pass:focus,
+#pass2:focus {
     outline: none;
     box-shadow: 0px 0px 1px 1px #55acee;
 }
@@ -171,7 +258,7 @@ nav:nth-child(1) {
 #speech {
     height: 120px;
     width: 250px;
-    z-index:300;
+    z-index: 300;
 }
 
 #errorMessage {
@@ -188,47 +275,75 @@ nav:nth-child(1) {
     height: 450px;
     width: 300px;
     -ms-transform: rotate(330deg);
-    -webkit-transform: rotate(330deg); 
+    -webkit-transform: rotate(330deg);
     transform: rotate(330deg);
 }
 
 #recipes {
     width: 60%;
     min-width: 400px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
     margin: 0 auto;
-    margin-top: 100px;
+}
+
+#recipes h2 {
+    text-align: center;
+    font-size: 32;
+    color: #250001;
+}
+
+.recipeName {
+    color: #fcba04;
 }
 
 .recipe {
-    width: 95%;
     margin: 0 auto;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
-    background-color: #55acee;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 5px solid #A50104;
+    border-radius: 10px;
+    background-color: #250001;
     padding: 10px;
-    min-height:60px;
+    min-height: 60px;
     overflow: hidden;
 }
 
-.recipe:hover {
-    transition: border-color 0.2s ease-out;
-    border-color: rgba(255,255,255, 0.8);
-    transition: background-color 2.6s ease-out;
-    background-color: #66bfff;
+#fullRecipe {
+
+    border: 3px solid #250001;
+    background-color: #590004;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+
 }
 
-img.recipeFace {
-    margin-left: 25px;
-    margin-right: 10px;
-    height: 50px;
-    width: 50px;
-    border-radius: 4px;
-    margin-top:10px;
-    float:left;
+#fullRecipe:hover {
+    background-color: #FCBA04;
+}
+
+.recipe h3 {
+    margin: 0;
+    padding: 2px;
+}
+
+#recipeInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 10px;
+}
+
+
+img.recipelogo {
+    margin-left: 50px;
+    margin-top: 50px;
+    height: 75px;
+    width: 75px;
+    float: left;
 }
 
 h3.emptyRecipe {
@@ -240,26 +355,50 @@ h3.emptyRecipe {
 }
 
 h3.recipeName {
-    float:left;
-    width: 200px;
     font-weight: bold;
-    padding-left: 65px;
-    font-size: 1.5em;
+    font-size: 1.75em;
 }
 
-h3.recipeAge {
-    float:right;
-    text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
-    font-size: 1.5em;
+.recipeRating,
+.recipeTime,
+.recipeCalories,
+.recipeServings {
+    color: white;
 }
+
+#editIcon,
+#deleteIcon {
+    color: #fcba04;
+    width: 30px;
+    height: 30px;
+}
+
+#editIcon:hover,
+#deleteIcon:hover {
+    color: #a50104;
+    width: 30px;
+    height: 30px;
+}
+
+
+
+#recipeActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#rating{
+    width: 50px;
+}
+
+
+
 
 .recipe:first-child {
     margin-top: 10px;
 }
 
 .recipe:last-child {
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }

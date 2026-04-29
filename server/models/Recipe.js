@@ -69,6 +69,11 @@ const RecipeSchema = new mongoose.Schema({
     },
 
     //uploaded file
+
+    fileName: {
+        type: String,
+    },
+
     fileData: {
         type: Buffer
     },
@@ -90,11 +95,6 @@ const RecipeSchema = new mongoose.Schema({
     servings: {
         type: Number,
     },
-
-    // notes: {
-    //     type: String,
-    //     trim: true,
-    // },
 
     //and the owner of the recipe
     owner: {

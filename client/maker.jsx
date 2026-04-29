@@ -6,13 +6,18 @@ const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
 
+//use this to go to the recipe page when the view recipe button is clicked 
+import { useNavigate, BrowserRouter, Routes, Route } from 'react-router-dom';
+
 //import all of the fontawesome icons into the react app. 
 //I am pulling the below code from the fontawesome docs: 
 // https://docs.fontawesome.com/web/use-with/react/add-icons#add-icons-using-svg-icon-packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { deleteModel } from 'mongoose';
+
+//import the  recipe component to be navigated to 
+import RecipePage from './recipe.jsx'
 
 
 
@@ -80,61 +85,7 @@ const handleRecipe = (e, onRecipeAdded, ingredients, manualSteps) => {
     return false;
 }
 
-const handleUpdate = (e, onRecipeUpdated, recipeID, close) => {
 
-    e.preventDefault();
-    helper.hideError();
-
-    //get the value from all of the fields that the user puts data into
-    //start with the required fields
-    const title = e.target.querySelector("#title").value;
-    const time = e.target.querySelector('#time').value;
-    const rating = e.target.querySelector('#rating').value;
-
-    //get the method of the steps here and see what they selected 
-    const stepsMethod = e.target.querySelector('#stepsMethod').value;
-
-    //optinal fields
-    const calories = e.target.querySelector('#calories').value;
-    const servings = e.target.querySelector('#servings').value;
-
-    const formedRecipe = new FormData();
-    formedRecipe.append('_id', recipeID);
-    formedRecipe.append('title', title);
-    formedRecipe.append('time', time);
-    formedRecipe.append('rating', rating);
-    formedRecipe.append('calories', calories);
-    formedRecipe.append('servings', servings);
-
-
-    //depending on the steps method add the correct info to the formData:
-    //manual steps: get each step from the array and add it to the fromData steps array
-    if (stepsMethod === 'manually') {
-        manualSteps.forEach((step) => {
-            formedRecipe.append('steps', step.typedStep);
-        });
-
-    }
-    else if (stepsMethod === 'link') {
-        //if its a link, then just get the link and add it
-        const link = e.target.querySelector('#link').value;
-        formedRecipe.append('link', link);
-    }
-    else if (stepsMethod === 'fileUpload') {
-
-        //if the user wants to upload the file, get the file and add it
-        const uploadedFile = e.target.querySelector('#uploadedFile').files[0];
-
-        formedRecipe.append('sampleFile', uploadedFile);
-    }
-
-
-
-    helper.sendPost(e.target.action, formedRecipe, onRecipeUpdated);
-    close();
-    return false;
-
-}
 
 const deleteRecipe = (e, recipeTitle, onRecipeDeleted) => {
 
@@ -207,6 +158,7 @@ const RecipeForm = (props) => {
 
 
 
+
     return (
 
         <div>
@@ -214,7 +166,7 @@ const RecipeForm = (props) => {
             {/* Setup the form. I want it to be a popup when the user clicks a plus icon
                 on the app. 
             */}
-            <Popup trigger={<button> Create Recipe </button>}
+            <Popup trigger={<div id='createDiv'><button id='createButton'> Create Recipe </button></div>}
                 modal nested>
                 {
                     close => (
@@ -226,6 +178,7 @@ const RecipeForm = (props) => {
                             className='recipeForm'
                             encType='multipart/form-data'
                         >
+                            <h2>Recipe Creator</h2>
                             <label htmlFor="title"> Recipe Name: </label>
                             <input id='title' type="text" name='title' placeholder='Enter Recipe Name...' />
 
@@ -257,7 +210,7 @@ const RecipeForm = (props) => {
                                     </div>
                                 ))}
 
-                                <button type='button' onClick={AddIngredient}>Add More Ingredients</button>
+                                <button id='addIngredient' type='button' onClick={AddIngredient}>Add More Ingredients</button>
 
                             </div>
 
@@ -297,7 +250,7 @@ const RecipeForm = (props) => {
                                         </div>
 
                                     ))}
-                                    <button type='button' onClick={addStep}>Add Step</button>
+                                    <button id='addStep' type='button' onClick={addStep}>Add Step</button>
 
 
 
@@ -328,7 +281,7 @@ const RecipeForm = (props) => {
                             <input id="rating" type="number" name="rating" min="0" max="10" />
 
                             {/* sumbit and close the popup window */}
-                            <input type="submit" className='makeRecipeSubmit' value="Add Recipe" />
+                            <input type="submit" id='submitRecipe' className='submitRecipe' value="Add Recipe" />
                         </form>
                     )
                 }
@@ -397,6 +350,63 @@ const UpdateForm = (props) => {
     {/* hook to handle when the list of manual steps are changed*/ }
     const [manualSteps, setSteps] = useState([{ typedStep: '' }])
 
+    const handleUpdate = (e, onRecipeUpdated, recipeID, close) => {
+
+        e.preventDefault();
+        helper.hideError();
+
+        //get the value from all of the fields that the user puts data into
+        //start with the required fields
+        const title = e.target.querySelector("#title").value;
+        const time = e.target.querySelector('#time').value;
+        const rating = e.target.querySelector('#rating').value;
+
+        //get the method of the steps here and see what they selected 
+        const stepsMethod = e.target.querySelector('#stepsMethod').value;
+
+        //optinal fields
+        const calories = e.target.querySelector('#calories').value;
+        const servings = e.target.querySelector('#servings').value;
+
+        const formedRecipe = new FormData();
+        formedRecipe.append('_id', recipeID);
+        formedRecipe.append('title', title);
+        formedRecipe.append('time', time);
+        formedRecipe.append('rating', rating);
+        formedRecipe.append('calories', calories);
+        formedRecipe.append('servings', servings);
+
+
+        //depending on the steps method add the correct info to the formData:
+        //manual steps: get each step from the array and add it to the fromData steps array
+        if (stepsMethod === 'manually' && manualSteps.length !== 0) {
+            console.log(manualSteps);
+            manualSteps.forEach((step) => {
+                formedRecipe.append('steps', step.typedStep);
+            });
+
+        }
+        else if (stepsMethod === 'link') {
+            //if its a link, then just get the link and add it
+            const link = e.target.querySelector('#link').value;
+            formedRecipe.append('link', link);
+        }
+        else if (stepsMethod === 'fileUpload') {
+
+            //if the user wants to upload the file, get the file and add it
+            const uploadedFile = e.target.querySelector('#uploadedFile').files[0];
+
+            formedRecipe.append('sampleFile', uploadedFile);
+        }
+
+
+
+        helper.sendPost(e.target.action, formedRecipe, onRecipeUpdated);
+        close();
+        return false;
+
+    }
+
     return (
 
         <form action="/updateRecipe"
@@ -405,6 +415,7 @@ const UpdateForm = (props) => {
             method='POST'
             onSubmit={(e) => { handleUpdate(e, props.triggerReload, props.id, props.closePopup); }}>
 
+            <h2>Update Recipe</h2>
             <label htmlFor="name"> Recipe Title: </label>
             <input id='title' type="text" name='title' placeholder='Update Recipe Title' />
 
@@ -457,7 +468,7 @@ const UpdateForm = (props) => {
                         </div>
 
                     ))}
-                    <button type='button' onClick={addStep}>Add Step</button>
+                    <button type='button' id='addStep' onClick={addStep}>Add Step</button>
 
 
 
@@ -484,7 +495,7 @@ const UpdateForm = (props) => {
                 </div>
             )}
 
-            <input type="submit" className='makeRecipeSubmit' value="Update Recipe" />
+            <input type="submit" id='submitRecipe' className='makeRecipeSubmit' value="Update Recipe" />
 
         </form>
 
@@ -495,6 +506,8 @@ const UpdateForm = (props) => {
 
 //fetches the recipe list from the db and displays it if there are any
 const RecipeList = (props) => {
+
+    const navigate = useNavigate();
 
     const [recipes, setRecipes] = useState(props.recipes || []);
 
@@ -520,34 +533,49 @@ const RecipeList = (props) => {
     //display information about the recipe on the page as a card
     const recipeNodes = recipes.map(recipe => {
 
+
+
         return (
 
             <div key={recipe.id} className='recipe'>
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className='recipeFace' />
-                <h3 className='recipeName'> Title: {recipe.title}</h3>
-                <h3 className='recipeRating'> Rating: {recipe.rating}</h3>
-                <h3 className='recipeTime'> Cook Time: {recipe.time}</h3>
-                <h3 className='recipeCalories'> Calories: {recipe.calories}</h3>
+                <img src="/assets/img/cooking.png" alt="cooking icon" className='recipelogo' />
 
-                {/* Allow the user to open the edit form in a popup window when they click the icon button */}
-                <Popup trigger={<FontAwesomeIcon icon={faPenToSquare} />} modal nested>
-                    {
-                        close => (
-                            //open up the update form when the edit button is clicked
-                            <UpdateForm triggerReload={props.triggerReload} id={recipe._id} closePopup={close} />
-                        )
-                    }
+                <div id='recipeInfo'>
+                    <h3 className='recipeName'> {recipe.title}</h3>
+                    <h3 className='recipeTime'> Cook Time: {recipe.time}</h3>
+                    <h3 className='recipeCalories'> Calories: {recipe.calories}</h3>
+                    <h3 className='recipeServings'> Servings: {recipe.servings}</h3>
+                    <h3 className='recipeRating'> Rating: {recipe.rating}</h3>
 
 
-                </Popup>
+                </div>
 
-                <button><FontAwesomeIcon icon={faTrashCan} onClick={(e) => deleteRecipe(e, recipe.title, props.triggerReload)} /> </button>
+
+                <div id='recipeActions'>
+
+                    {/* Allow the user to open the edit form in a popup window when they click the icon button */}
+                    <Popup trigger={<FontAwesomeIcon id='editIcon' icon={faPenToSquare} />} modal nested>
+                        {
+                            close => (
+                                //open up the update form when the edit button is clicked
+                                <UpdateForm triggerReload={props.triggerReload} id={recipe._id} closePopup={close} />
+                            )
+                        }
+
+                    </Popup>
+
+                    <button id='fullRecipe' onClick={() => window.location.href = `/recipe/${recipe._id}`}>Full Recipe</button>
+                    <FontAwesomeIcon id='deleteIcon' icon={faTrashCan} onClick={(e) => deleteRecipe(e, recipe.title, props.triggerReload)} />
+
+                </div>
+
             </div>
         );
     });
 
     return (
         <div className='recipeList'>
+            <h2>Your Recipes</h2>
             {recipeNodes}
         </div>
     );
@@ -558,14 +586,42 @@ const App = () => {
 
     const [reloadRecipes, setReloadRecipes] = useState(false);
 
+    //hooks to track the account type and recipes that they made 
+    const [accountType, setAccountType] = useState('Free');
+    const [recipeCount, setRecipeCount] = useState(0);
+
+    //fetch the account type and recipe count when the page loads
+    useEffect(() => {
+        const loadAccountInfo = async () => {
+            const response = await fetch('/getAccount');
+            const data = await response.json();
+            setAccountType(data.accountType);
+        };
+
+        const loadRecipeCount = async () => {
+            const response = await fetch('/getRecipes');
+            const data = await response.json();
+            setRecipeCount(data.recipes.length);
+        };
+
+        loadAccountInfo();
+        loadRecipeCount();
+    }, [reloadRecipes]);
+
+    const atLimit = accountType === 'Free' && recipeCount >= 3;
+
     return (
 
         <div>
             <div id='makeRecipe'>
-                <RecipeForm triggerReload={() => setReloadRecipes(!reloadRecipes)} closePopup={close} />
 
+                {/* show warning instead of the button if they are at the limit */}
+                {atLimit ? (
+                    <p className='limitMessage'>You have reached the free plan limit of 3 recipes. Upgrade to Premium for unlimited recipes!</p>
+                ) : (
+                    <RecipeForm triggerReload={() => setReloadRecipes(!reloadRecipes)} />
+                )}
             </div>
-
 
             <div id='recipes'>
                 <RecipeList recipes={[]} reloadRecipes={reloadRecipes} triggerReload={() => setReloadRecipes(!reloadRecipes)} />
@@ -579,7 +635,18 @@ const App = () => {
 
 const init = () => {
     const root = createRoot(document.getElementById('app'));
-    root.render(<App />);
+
+    // Setup a browser router to be able to go to the full recipe page when 
+    //the user clicks the button to go to the page
+    //this is from this tutorial: https://www.geeksforgeeks.org/reactjs/how-to-redirect-to-another-page-in-reactjs/
+    root.render(
+        <BrowserRouter>
+            <Routes>
+                <Route path="/maker" element={<App />} />
+                <Route path="/recipe" element={<RecipePage />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 window.onload = init;

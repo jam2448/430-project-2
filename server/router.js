@@ -7,8 +7,10 @@ const router = (app) => {
     app.get('/profitModels', mid.requiresLogin, controllers.Recipe.profitModels);
     app.get('/getAccount', mid.requiresLogin, controllers.Account.getAccount);
     app.get('/changePass', mid.requiresLogin, controllers.Account.changePassPage);
-
+    app.get('/recipe/:id', mid.requiresLogin, controllers.Recipe.recipePage);
     app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+    app.get('/getRecipeFile/:id', mid.requiresLogin, controllers.Recipe.getFile);
+    app.get('/getRecipe/:id', mid.requiresLogin, controllers.Recipe.getRecipe);
     app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
     
     app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
@@ -24,7 +26,7 @@ const router = (app) => {
 
     
     app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
-
+    app.get('/*wild', controllers.Recipe.notFound);
 
     
 

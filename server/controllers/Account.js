@@ -1,7 +1,6 @@
 const models = require('../models');
 const Account = models.Account;
-const { after } = require('underscore');
-const { updateSearchIndex } = require('../models/Recipe');
+
 
 
 const loginPage = (req, res) => {
@@ -81,84 +80,65 @@ const signup = async (req, res) => {
 //allows the user to change their password 
 const changePassword = async (req, res) => {
 
+    //get the info from the request
     const currentPassword = `${req.body.currentPassword}`;
     const newPassword = `${req.body.newPassword}`;
     const confirmPassword = `${req.body.confirmNew}`;
 
-    //if the new password is the same as the current, tell them it cannot be the same password
-    if (currentPassword === newPassword) {
-
-        return res.status(400).json({ error: "Current and new password cannot match" });
-
-    }
-
-    //if the new and confirmed password don't match then say they don't match
-    if (newPassword !== confirmPassword) {
-
-        return res.status(400).json({ error: "Passwords do not match" });
-    }
-
-    //return an error if nothing was entered into every field as they are all required
+    //if the user entered no fields, send an error
     if (!currentPassword || !newPassword || !confirmPassword) {
-
         return res.status(400).json({ error: "All fields are required" });
     }
 
+    //if the user is using the same password, send an error
+    if (currentPassword === newPassword) {
+        return res.status(400).json({ error: "Current and new password cannot match" });
+    }
 
+    //if the new passwords do not match, throw an error
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ error: "Passwords do not match" });
+    }
 
-    //replace the old password with the new one
     try {
+        //wrap in a promise to properly await it
+        await new Promise((resolve, reject) => {
 
-        //first authenticate the cureent password 
-        Account.authenticate(req.session.account.username, currentPassword, (err, account) => {
-            if (err || !account) {
-
-                return res.status(401).json({ error: "current password is incorrect." });
-            }
+            //chech and see if the user entered the correct current password
+            Account.authenticate(req.session.account.username, currentPassword, (err, account) => {
+                if (err || !account) reject(new Error("Current password is incorrect."));
+                else resolve(account);
+            });
         });
 
-        //generate a new hashed password with the new password
+        //generate a new hash for the password
         const newHash = await Account.generateHash(newPassword);
 
-        //find the account in the db and replace the old passsword with the new one
-        const updatedAccount = await Account.findOneAndUpdate({ username: req.session.account.username },
-            {
-                password: newHash
-
-            },
-            {
-                returnDocument: 'after',
-            }
-
+        //update the account with the new password
+        const updatedAccount = await Account.findOneAndUpdate(
+            { username: req.session.account.username },
+            { password: newHash },
+            { returnDocument: 'after' }
         ).exec();
 
-        //update the session to refelct the change
+        //send it to the database
         req.session.account = Account.toAPI(updatedAccount);
-
-        //return a successful message
-        return res.status(200).json({ message: 'Password changed successfully' });
+        return res.status(200).json({ error: 'Password changed successfully' });
 
     } catch (err) {
-
         console.log(err);
         if (err.message === "Current password is incorrect.") {
             return res.status(401).json({ error: err.message });
         }
-
         return res.status(500).json({ error: 'An error occurred' });
-
     }
-
-
-
-
 };
 
 //update the user's account plan to free or premium based on what the user says
 const updatePlan = async (req, res) => {
 
     //get the value of the plan that the user wants to switch to
-    const planToSwitch = `${req.body.plan}`;
+    const planToSwitch = `${req.body.newPlan}`;
     const accountID = `${req.session.account._id}`;
 
     //update the plan of the account
@@ -182,6 +162,7 @@ const updatePlan = async (req, res) => {
     }
 
 }
+
 
 module.exports = {
     loginPage, login, logout, signup, updatePlan, getAccount, changePassPage,
