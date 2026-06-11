@@ -179,10 +179,10 @@ const RecipeForm = (props) => {
                             encType='multipart/form-data'
                         >
                             <h2>Recipe Creator</h2>
-                            <label htmlFor="title"> Recipe Name: </label>
+                            <label htmlFor="title"> Recipe Name:* </label>
                             <input id='title' type="text" name='title' placeholder='Enter Recipe Name...' />
 
-                            <label htmlFor="time">Total Cook Time: </label>
+                            <label htmlFor="time">Total Cook Time:* </label>
                             <input id="time" type="text" name="time" placeholder='Enter Cook Time...' />
 
                             <br />
@@ -197,7 +197,7 @@ const RecipeForm = (props) => {
                             {/* Dynamic ingredient form that allows the user to add 
                                 as many ingredients as they want.
                                 Referenced from: https://www.geeksforgeeks.org/reactjs/how-to-build-dynamic-forms-in-react/ */}
-                            <label htmlFor="ingredients">Ingredients: </label>
+                            <label htmlFor="ingredients">Ingredients:* </label>
 
                             <div id="ingredients">
                                 {ingredients.map((ingredient, index) => (
@@ -277,7 +277,7 @@ const RecipeForm = (props) => {
                                 </div>
                             )}
 
-                            <label htmlFor="rating">Rating: </label>
+                            <label htmlFor="rating">Rating:* </label>
                             <input id="rating" type="number" name="rating" min="0" max="10" />
 
                             {/* sumbit and close the popup window */}
