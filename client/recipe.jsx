@@ -31,7 +31,6 @@ const RecipePage = (props) => {
     //Safeguard against the app crashing when it is fetching the recipe
     if (!recipe) return <h1>Loading...</h1>
 
-
     return (
 
         <div id='recipeContent'>
@@ -56,7 +55,6 @@ const RecipePage = (props) => {
                 </div>
 
             </div>
-
 
             <div id='detailedInfo'>
 

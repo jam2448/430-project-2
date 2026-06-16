@@ -85,21 +85,18 @@ nav:nth-child(1) {
 .recipeForm {
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
     gap: 10px;
-    margin: 50px 20px 20px 20px;
+    margin: 100px 20px 100px 20px;
     background-color: #250001;
 
     border: 5px solid #590004;
     border-radius: 10px;
-    max-width: 600px;
-    padding: 25px;
-    padding-top: 50px;
-    margin-top: 25px;
+    max-width: 250px;
+    padding: 15px 50px 50px 50px;
 
     overflow-y: auto;
-    max-height: 80vh;
+    max-height: 450px;
     overflow-x: hidden;
 }
 
@@ -156,9 +153,18 @@ nav:nth-child(1) {
 }
 
 
-#addIngredient,
-#addStep,
 #submitRecipe {
+    border: 3px solid #250001;
+    background-color: #590004;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 10px;
+
+}
+
+#addStep, #addIngredient {
 
     border: 3px solid #250001;
     background-color: #590004;
@@ -166,7 +172,7 @@ nav:nth-child(1) {
     padding: 10px;
     border-radius: 10px;
     font-size: 14px;
-    margin: 5px;
+    margin: 10px, 10px, 10px, 40px;
 
 }
 
@@ -389,7 +395,7 @@ h3.recipeName {
 }
 
 #rating{
-    width: 50px;
+    width: 100px;
 }
 
 

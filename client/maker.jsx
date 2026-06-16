@@ -105,7 +105,6 @@ const RecipeForm = (props) => {
 
     //handles when the user modifies one of the ingredients so that it gets handles properly 
     const handleIngredientChange = (e, index) => {
-
         //get the name of the ingredient to be modified
         const ingName = e.target.name;
 
@@ -114,8 +113,17 @@ const RecipeForm = (props) => {
 
         newIngredients[index][ingName] = e.target.value;
         setIngredients(newIngredients);
-
     };
+
+    //Creates a new input field for the user to add a new ingredient to the list
+    const AddIngredient = () => {
+        setIngredients([...ingredients, { ingredientName: '' }]);
+    }
+
+    
+    {/* hook to handle the ingredient form when it is edited*/ }
+    const [ingredients, setIngredients] = useState([{ ingredientName: '' }]);
+
 
     //handle when a step is changed
     const stepChange = (e, index) => {
@@ -140,24 +148,13 @@ const RecipeForm = (props) => {
         setSteps([...manualSteps, { typedStep: '' }])
     };
 
-    //Creates a new input field for the user to add a new ingredient to the list
-    const AddIngredient = () => {
-        setIngredients([...ingredients, { ingredientName: '' }]);
-    }
-
-
-    {/* hook to handle the ingredient form when it is edited*/ }
-    const [ingredients, setIngredients] = useState([{ ingredientName: '' }]);
+   
 
     {/* hook to handle the steps method functionality and when the use changes their oprions */ }
     const [stepsMethod, setStepsMethod] = useState('manually');
 
     {/* hook to handle when the list of manual steps are changed*/ }
     const [manualSteps, setSteps] = useState([{ typedStep: '' }])
-
-
-
-
 
     return (
 
@@ -166,6 +163,7 @@ const RecipeForm = (props) => {
             {/* Setup the form. I want it to be a popup when the user clicks a plus icon
                 on the app. 
             */}
+
             <Popup trigger={<div id='createDiv'><button id='createButton'> Create Recipe </button></div>}
                 modal nested>
                 {
@@ -192,11 +190,11 @@ const RecipeForm = (props) => {
                             <label htmlFor="servings">Servings: </label>
                             <input id="servings" type="text" name="servings" placeholder='Servings' />
 
-
-
                             {/* Dynamic ingredient form that allows the user to add 
                                 as many ingredients as they want.
                                 Referenced from: https://www.geeksforgeeks.org/reactjs/how-to-build-dynamic-forms-in-react/ */}
+
+                            
                             <label htmlFor="ingredients">Ingredients:* </label>
 
                             <div id="ingredients">
@@ -257,7 +255,6 @@ const RecipeForm = (props) => {
                                 </div>
                             )}
 
-
                             {stepsMethod === 'link' && (
 
                                 //if they choose link, then just make a text box to enter the link to the recipe
@@ -267,7 +264,6 @@ const RecipeForm = (props) => {
 
                                 </div>
                             )}
-
                             {stepsMethod === 'fileUpload' && (
 
                                 //if a fileupload, then make a button to upload the file

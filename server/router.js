@@ -12,7 +12,6 @@ const router = (app) => {
     app.get('/getRecipeFile/:id', mid.requiresLogin, controllers.Recipe.getFile);
     app.get('/getRecipe/:id', mid.requiresLogin, controllers.Recipe.getRecipe);
     app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
-    
     app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
 
     app.get('/logout', mid.requiresLogin, controllers.Account.logout);
@@ -22,8 +21,6 @@ const router = (app) => {
     app.post('/deleteRecipe', mid.requiresLogin, controllers.Recipe.deleteRecipe);
     app.post('/updatePlan', mid.requiresLogin, controllers.Account.updatePlan);
     app.post('/changePassword', mid.requiresLogin, controllers.Account.changePassword);
-
-
     
     app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
     app.get('/*wild', controllers.Recipe.notFound);
